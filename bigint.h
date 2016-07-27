@@ -19,8 +19,11 @@ public:
     BigInt operator +(int num);
     BigInt operator -(int num);
     BigInt operator -(BigInt num);
-    bool operator==(const BigInt& other);
-    bool operator<(const BigInt other);
+    bool operator == (const BigInt& other);
+    bool operator < (const BigInt& other);
+    bool operator > (const BigInt& other);
+    bool operator <= (const BigInt& other);
+    bool operator >= (const BigInt& other);
     void print();
     int getLength() const;
 private:

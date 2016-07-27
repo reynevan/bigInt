@@ -19,7 +19,7 @@ int BigInt::getLength() const
     return _number.size();
 }
 
-bool BigInt::operator<(const BigInt other)
+bool BigInt::operator < (const BigInt& other)
 {
     if (other._sign > 0 && _sign < 0){
         return true;
@@ -50,6 +50,39 @@ bool BigInt::operator<(const BigInt other)
         return ((_number.at(i) < other._number.at(i)) && _sign > 0) || ((_number.at(i) > other._number.at(i)) && _sign < 0);
     }
 }
+
+bool BigInt::operator > (const BigInt& other)
+{
+    return !((*this) < other) && !((*this) == other);
+}
+
+bool BigInt::operator <= (const BigInt& other)
+{
+    return ((*this) < other || (*this) == other);
+}
+
+bool BigInt::operator >= (const BigInt& other)
+{
+    return ((*this) > other || (*this) == other);
+}
+
+bool BigInt::operator == (const BigInt& other)
+{
+    if (_sign ^ other._sign){
+        return false;
+    }
+    if (getLength() != other.getLength()){
+        return false;
+    }
+    for (int i = 0; i < getLength(); i++){
+        if (_number.at(i) != other._number.at(i)){
+            return false;
+        }
+    }
+    return true;
+}
+
+
 
 BigInt BigInt::operator ++(int a)
 {
@@ -134,21 +167,7 @@ void BigInt::operator -=(int num)
     (*this) -= std::to_string(num);
 }
 
-bool BigInt::operator==(const BigInt& other)
-{
-    if (_sign ^ other._sign){
-        return false;
-    }
-    if (getLength() != other.getLength()){
-        return false;
-    }
-    for (int i = 0; i < getLength(); i++){
-        if (_number.at(i) != other._number.at(i)){
-            return false;
-        }
-    }
-    return true;
-}
+
 
 BigInt::operator std::string()
 {

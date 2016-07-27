@@ -9,42 +9,36 @@ std::string addInt(BigInt a, int b)
 	return (std::string)(a + b);
 }
 
-bool compareLess(BigInt a, BigInt b)
+BOOST_AUTO_TEST_SUITE(comparing)}
+BOOST_AUTO_TEST_CASE(testCompare)
 {
-	return a < b;
+	BigInt a = BigInt("0");
+	BigInt a2 = BigInt("0");
+	BigInt b = BigInt("1");
+	BigInt b2 = BigInt("1");
+	BigInt c = BigInt("-1");
+	BigInt c2 = BigInt("-1");
+	BigInt d = BigInt("10");
+	BigInt e = BigInt("-10");
+	BigInt f = BigInt("123");
+	BigInt g = BigInt("-123");
+	BigInt h = BigInt("-99999999999999999999999999999999999999999999999");
+	BigInt i = BigInt("99999999999999999999999999999999999999999999999");
+
+	BOOST_CHECK(b > a == true);
+	BOOST_CHECK(a > a2 == false);
+	BOOST_CHECK(a > a2 == false);
+	BOOST_CHECK(b < a == false);
+	BOOST_CHECK(b > c == true);
+	BOOST_CHECK(b < c == false);
+	BOOST_CHECK(b < d == true);
+	BOOST_CHECK(e < c == true);
+	BOOST_CHECK(g < d == true);
+	BOOST_CHECK(h < i == true);
+	BOOST_CHECK(h > i == false);
+	BOOST_CHECK(a <= b  == true);
+	BOOST_CHECK(a <= a2  == true);
+	BOOST_CHECK((a == b) == false);
+	BOOST_CHECK((b == c) == false);
 }
 
-bool compareEqual(BigInt a, BigInt b)
-{
-	return a == b;
-}
-
-BOOST_AUTO_TEST_CASE(universeInOrder)
-{
-	BigInt a = BigInt("2");
-	BigInt b = BigInt("10");
-	BigInt c = BigInt("15");
-	BigInt d = BigInt("-30");
-	BigInt e = BigInt("-32");
-	BigInt f = BigInt("-3");
-    BOOST_CHECK(addInt(a, 2) == (std::string)"4");
-	BOOST_CHECK(compareLess(a, b) == true);	
-	BOOST_CHECK(compareLess(b, a) == false);	
-	BOOST_CHECK(compareLess(b, c) == true);	
-	BOOST_CHECK(compareLess(a, c) == true);	
-	BOOST_CHECK(compareLess(c, a) == false);	
-	BOOST_CHECK(compareLess(e, d) == true);	
-	BOOST_CHECK(compareLess(f, a) == true);	
-	BOOST_CHECK(compareLess(d, f) == true);	
-	BOOST_CHECK(compareLess(a, f) == false);	
-	
-	BigInt a2 = BigInt("2");
-	BigInt am = BigInt("-2");
-	BigInt am2 = BigInt("-2");
-	BOOST_CHECK(compareEqual(a, b) == false);	
-	BOOST_CHECK(compareEqual(a, a2) == true);	
-	BOOST_CHECK(compareEqual(a, am) == false);	
-	BOOST_CHECK(compareEqual(am, am2) == true);	
-	BOOST_CHECK(compareEqual(e, f) == false);	
-	BOOST_CHECK(compareEqual(b, c) == false);	
-}
