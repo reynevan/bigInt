@@ -4,14 +4,16 @@
 
 int main(int argc, char *argv[])
 {
-    BigInt num = BigInt("2");
+    BigInt num = BigInt(-1);
     //std::string a = (std::string)(num - 4);
-    BigInt num2 = BigInt("2");
-    if (num==num2){
+    BigInt num2 = BigInt(0);
+    BigInt c = BigInt(0);
+    std::cout<< (std::string)(c+num)<<std::endl;
+    /*if (num2+num == -1){
         std::cout <<"rowne"<<std::endl;
     } else {
         std::cout <<"nierowne"<<std::endl;
-    }
-    num.print();
+    }*/
+   // num.print();
     return 0;
 }

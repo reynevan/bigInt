@@ -3,13 +3,14 @@
 #include <boost/test/unit_test.hpp>
 #include "bigint.h"
 #include <string>
+#include <iostream>
 
 std::string addInt(BigInt a, int b)
 {
 	return (std::string)(a + b);
 }
 
-BOOST_AUTO_TEST_SUITE(comparing)}
+BOOST_AUTO_TEST_SUITE(comparing)
 BOOST_AUTO_TEST_CASE(testCompare)
 {
 	BigInt a = BigInt("0");
@@ -41,4 +42,17 @@ BOOST_AUTO_TEST_CASE(testCompare)
 	BOOST_CHECK((a == b) == false);
 	BOOST_CHECK((b == c) == false);
 }
-
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(arithmetics)
+BOOST_AUTO_TEST_CASE(testArithmetics)
+{
+	BigInt a = BigInt(0);
+	BigInt b = BigInt(-1);
+	BigInt c = BigInt("10000000000000");
+	BigInt d = BigInt( "9999999999999");
+	BOOST_CHECK((a+b) == BigInt(-1));
+	BOOST_CHECK((d+1) == c);
+	BOOST_CHECK((c-1) == d);
+	BOOST_CHECK((c-c) == 0);
+}
+BOOST_AUTO_TEST_SUITE_END()

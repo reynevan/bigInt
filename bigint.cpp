@@ -4,7 +4,7 @@ BigInt::BigInt(std::string number = "0")
 {
     _sign = 1;
     std::string character;
-    for (int i = 0; i < number.size(); i++){
+    for (unsigned int i = 0; i < number.size(); i++){
         character = number.substr(i, 1);
         if (_isDigit(character)){
             _number.push_back(std::stoi(character));
@@ -12,6 +12,11 @@ BigInt::BigInt(std::string number = "0")
             _sign = -1;
         }
     }
+}
+
+BigInt::BigInt(int number = 0)
+{
+    (*this) = BigInt(std::to_string(number));
 }
 
 int BigInt::getLength() const
@@ -49,6 +54,8 @@ bool BigInt::operator < (const BigInt& other)
         }
         return ((_number.at(i) < other._number.at(i)) && _sign > 0) || ((_number.at(i) > other._number.at(i)) && _sign < 0);
     }
+
+    return false;
 }
 
 bool BigInt::operator > (const BigInt& other)
@@ -66,7 +73,7 @@ bool BigInt::operator >= (const BigInt& other)
     return ((*this) > other || (*this) == other);
 }
 
-bool BigInt::operator == (const BigInt& other)
+bool BigInt::operator == (const BigInt &other)
 {
     if (_sign ^ other._sign){
         return false;
@@ -82,92 +89,118 @@ bool BigInt::operator == (const BigInt& other)
     return true;
 }
 
-
+bool BigInt::operator == (const int& other)
+{
+    return (*this) == BigInt(other);
+}
 
 BigInt BigInt::operator ++(int a)
 {
-    BigInt copy((std::string)(*this));
+    BigInt copy = (*this).copy();
     (*this) += 1;
     return copy;
 }
 
 BigInt BigInt::operator +(int num)
 {
-    BigInt bigInt = BigInt((std::string)(*this));
-    bigInt += num;
-    return bigInt;
-
+    BigInt copy = (*this).copy();
+    copy += num;
+    return copy;
 }
 
-BigInt BigInt::operator -(BigInt subtrahend)
+BigInt BigInt::operator +(BigInt num)
 {
-    /*std::string strSubtrahend = (std::string)subtrahend;
-    int index = subtrahend.getLength();
-    std::deque<int>::reverse_iterator digit;
-    int subtrahendDigit = 0;
-    for (digit = _number.begin(); digit != _number.end(); ++digit, index--){
-        subtrahendDigit = std::stoi(strNum.substr(index, 1));
-        if (index >= 0){
-            (*digit) -= subtrahendDigit;
-        } else {
-            (*digit) = 10 - *digit;
-        }
-    }*/
+    BigInt copy = (*this).copy();
+    copy += num;
+    return copy;
 }
 
-void BigInt::operator +=(std::string num)
+
+BigInt BigInt::operator -(int num)
 {
+    BigInt copy = (*this).copy();
+    copy -= num;
+    return copy;
+}
+
+BigInt BigInt::operator -(BigInt num)
+{
+    BigInt copy = (*this).copy();
+    copy -= num;
+    return copy;
+}
+
+void BigInt::operator +=(BigInt num)
+{
+    if (_sign > 0 && num._sign < 0){
+        return (*this) -= num.abs();
+    }
     bool carry = false;
-    int index = num.size() - 1;
+    int index = num.getLength() - 1;
     std::deque<int>::reverse_iterator digit;
     for (digit = _number.rbegin(); digit != _number.rend(); ++digit, index--){
         if (index >= 0){
-            (*digit) += std::stoi(num.substr(index, 1));
+            (*digit) += num._number.at(index);
         }
         if (carry){
             (*digit)++;
         }
+        carry = false;
         if (*digit >= 10){
-            carry = true;
             (*digit) -= 10;
-        } else {
-            carry = false;
+            if (digit == (_number.rend() - 1)){
+                _number.push_front(1);
+            } else {
+                carry = true;
+            }
         }
     }
 }
 
-void BigInt::operator -=(std::string num)
+void BigInt::operator +=(std::string num)
 {
-    int index = num.size() - 1;
+    (*this) += BigInt(num);
+}
+
+void BigInt::operator +=(int num)
+{
+    (*this) += BigInt(num);
+}
+
+void BigInt::operator -=(BigInt num)
+{
+    int index = num.getLength() - 1;
     bool carry = false;
     for (std::deque<int>::reverse_iterator digit = _number.rbegin(); digit != _number.rend(); ++digit, index--){
         if (index >= 0){
-            (*digit) -= std::stoi(num.substr(index, 1));
+            (*digit) -= num._number.at(index);
         }
         if (carry){
             (*digit)--;
         }
+        carry = false;
         if (*digit < 0){
-            (*digit) += 10;
-            carry = true;
-        } else {
-            carry = false;
+            if (digit != _number.rbegin() - 1){
+                (*digit) += 10;
+                carry = true;
+            } else {
+                (*digit) *= -1;
+                _sign = -1;
+            }
         }
     }
     _lTrim();
 }
 
-void BigInt::operator +=(int num)
+void BigInt::operator -=(std::string num)
 {
-    (*this) += std::to_string(num);
+    (*this) -= BigInt(num);
 }
 
 void BigInt::operator -=(int num)
 {
-    (*this) -= std::to_string(num);
+    (*this) -= BigInt(num);
 }
-
-
 
 BigInt::operator std::string()
 {
@@ -179,6 +212,19 @@ BigInt::operator std::string()
         str.append(std::to_string(*it));
     }
     return str;
+}
+
+BigInt BigInt::abs()
+{
+    BigInt num = (*this).copy();
+    num._sign = 1;
+    return num;
+}
+
+BigInt BigInt::copy()
+{
+    BigInt copy = BigInt((std::string)(*this));
+    return copy;
 }
 
 void BigInt::print(){
