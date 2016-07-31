@@ -150,6 +150,10 @@ void BigInt::operator +=(BigInt num)
     if (_sign > 0 && num._sign < 0){
         return (*this) -= num.abs();
     }
+    if (_sign < 0 && num._sign > 0){
+        (*this) = num - (*this).abs();
+        return;
+    }
     bool carry = false;
     int index = num.getLength() - 1;
     std::deque<int>::reverse_iterator digit;

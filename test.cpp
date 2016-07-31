@@ -50,6 +50,14 @@ BOOST_AUTO_TEST_CASE(testArithmetics)
 	BigInt b = BigInt(-1);
 	BigInt c = BigInt("10000000000000");
 	BigInt d = BigInt( "9999999999999");
+	BigInt e = BigInt(-100);
+	BigInt f = BigInt(-40);
+	BigInt g = BigInt(40);
+	BOOST_CHECK((e+f) == -140);
+	BOOST_CHECK((e+g) == -60);
+	BOOST_CHECK((e-f) == -60);
+	BOOST_CHECK((e-g) == -140);
+	BOOST_CHECK((g+e) == -60);
 	BOOST_CHECK((a+b) == BigInt(-1));
 	BOOST_CHECK((d+1) == c);
 	BOOST_CHECK((c-1) == d);
