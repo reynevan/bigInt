@@ -1,6 +1,6 @@
 #include "bigint.h"
 
-BigInt::BigInt(std::string number = "0")
+BigInt::BigInt(std::string number)
 {
     _sign = 1;
     std::string character;
@@ -14,9 +14,14 @@ BigInt::BigInt(std::string number = "0")
     }
 }
 
-BigInt::BigInt(int number = 0)
+BigInt::BigInt(int number)
 {
     (*this) = BigInt(std::to_string(number));
+}
+
+BigInt::BigInt()
+{
+    (*this) = BigInt(0);
 }
 
 int BigInt::getLength() const
@@ -94,6 +99,16 @@ bool BigInt::operator == (const int& other)
     return (*this) == BigInt(other);
 }
 
+bool BigInt::operator != (const int& other)
+{
+    return !((*this) == BigInt(other));
+}
+
+bool BigInt::operator != (const BigInt& other)
+{
+    return !((*this) == BigInt(other));
+}
+
 BigInt BigInt::operator ++(int a)
 {
     BigInt copy = (*this).copy();
@@ -169,25 +184,39 @@ void BigInt::operator +=(int num)
 
 void BigInt::operator -=(BigInt num)
 {
-    int index = num.getLength() - 1;
+    BigInt minuent;
+    BigInt subtrahend;
+    if ((*this) >= num){
+        minuent = (*this);
+        subtrahend = num;
+    } else {
+        minuent = num;
+        subtrahend = (*this);
+    }
+    int index = subtrahend.getLength() - 1;
     bool carry = false;
-    for (std::deque<int>::reverse_iterator digit = _number.rbegin(); digit != _number.rend(); ++digit, index--){
+    for (std::deque<int>::reverse_iterator digit = minuent._number.rbegin(); digit != minuent._number.rend(); ++digit, index--){
         if (index >= 0){
-            (*digit) -= num._number.at(index);
+            (*digit) -= subtrahend._number.at(index);
         }
         if (carry){
             (*digit)--;
         }
         carry = false;
         if (*digit < 0){
-            if (digit != _number.rbegin() - 1){
+            if (digit != minuent._number.rbegin() - 1){
                 (*digit) += 10;
                 carry = true;
             } else {
                 (*digit) *= -1;
-                _sign = -1;
+                minuent._sign = -1;
             }
         }
+    }
+    bool negative = (*this) < num;
+    (*this) = minuent.copy();
+    if (negative && (*this) != 0){
+        _sign = -1;
     }
     _lTrim();
 }
@@ -234,7 +263,7 @@ void BigInt::print(){
 void BigInt::_lTrim()
 {
     for(std::deque<int>::iterator it = _number.begin(); it != _number.end(); ++it){
-        if (*it == 0){
+        if (*it == 0 && it != _number.end() - 1){
             _number.pop_front();
         } else {
             break;

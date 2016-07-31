@@ -9,6 +9,7 @@
 class BigInt
 {
 public:
+    BigInt();
     BigInt(std::string);
     BigInt(int);
     BigInt operator ++ (int);
@@ -25,6 +26,8 @@ public:
     BigInt operator -(BigInt num);
     bool operator == (const BigInt& other);
     bool operator == (const int& other);
+    bool operator != (const BigInt& other);
+    bool operator != (const int& other);
     bool operator < (const BigInt& other);
     bool operator > (const BigInt& other);
     bool operator <= (const BigInt& other);
