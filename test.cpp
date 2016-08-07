@@ -53,6 +53,9 @@ BOOST_AUTO_TEST_CASE(testArithmetics)
 	BigInt e = BigInt(-100);
 	BigInt f = BigInt(-40);
 	BigInt g = BigInt(40);
+	BigInt h = BigInt(2000);
+	BigInt i = BigInt(120);
+	BOOST_CHECK((i+h) == 2120);
 	BOOST_CHECK((e+f) == -140);
 	BOOST_CHECK((e+g) == -60);
 	BOOST_CHECK((e-f) == -60);
@@ -62,5 +65,15 @@ BOOST_AUTO_TEST_CASE(testArithmetics)
 	BOOST_CHECK((d+1) == c);
 	BOOST_CHECK((c-1) == d);
 	BOOST_CHECK((c-c) == 0);
+	
+	a++;
+	BOOST_CHECK(a == 1);
+	a--;
+	BOOST_CHECK(a == 0);
+
+	BOOST_CHECK(a * 123 == 0);
+	BOOST_CHECK(g * 2 == 80);
+	BOOST_CHECK(f * e == 4000);
+	BOOST_CHECK(f * g == -1600);
 }
 BOOST_AUTO_TEST_SUITE_END()
