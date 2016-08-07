@@ -2,14 +2,14 @@
 
 BigInt::BigInt(std::string number)
 {
-    _sign = 1;
+    _sign = SIGN_POSITIVE;
     std::string character;
     for (unsigned int i = 0; i < number.size(); i++){
         character = number.substr(i, 1);
         if (_isDigit(character)){
             _number.push_back(std::stoi(character));
         } else if (i == 0 && character == std::string("-")){
-            _sign = -1;
+            _sign = SIGN_NEGATIVE;
         }
     }
 }
@@ -27,7 +27,7 @@ BigInt::BigInt()
 BigInt::operator std::string()
 {
     std::string str = std::string();
-    if (_sign == -1){
+    if (_sign == SIGN_NEGATIVE){
         str.append("-");
     }
     for (std::deque<int>::iterator it = _number.begin(); it != _number.end(); ++it){
@@ -38,38 +38,29 @@ BigInt::operator std::string()
 
 void BigInt::operator +=(BigInt num)
 {
-    if (_sign > 0 && num._sign < 0){
+    if (_sign == SIGN_POSITIVE && num._sign == SIGN_NEGATIVE){
         return (*this) -= num.abs();
     }
-    if (_sign < 0 && num._sign > 0){
+    if (_sign == SIGN_NEGATIVE && num._sign  == SIGN_POSITIVE){
         (*this) = num - (*this).abs();
         return;
     }
-    BigInt num1, num2;
-    if (getLength() >= num.getLength()){
-        num1 = (*this);
-        num2 = num;
-    } else {
-        num1 = num;
-        num2 = (*this);
-    }
-    bool carry = false;
-    int index = num2.getLength() - 1;
-    std::deque<int>::reverse_iterator digit;
-    for (digit = num1._number.rbegin(); digit != num1._number.rend(); ++digit, index--){
-        if (index >= 0){
-            (*digit) += num2._number.at(index);
+    BigInt num1 = getLength() >= num.getLength() ? (*this) : num;
+    BigInt num2 = getLength() >= num.getLength() ? num : (*this);
+    int carry = 0;
+    for (std::deque<int>::reverse_iterator digit = num1._number.rbegin(); digit != num1._number.rend(); ++digit){
+        if (num2.getLength() > 0){
+            (*digit) += num2._number.back();
+            num2._number.pop_back();
         }
-        if (carry){
-            (*digit)++;
-        }
-        carry = false;
+        (*digit) += carry;
+        carry = 0;
         if (*digit >= 10){
             (*digit) -= 10;
             if (digit == (num1._number.rend() - 1)){
                 num1._number.push_front(1);
             } else {
-                carry = true;
+                carry = 1;
             }
         }
     }
@@ -88,47 +79,38 @@ void BigInt::operator +=(int num)
 
 void BigInt::operator -=(BigInt num)
 {
-    if (num._sign < 0){
+    if (num._sign == SIGN_NEGATIVE){
         return (*this) += num.abs();
     }
-    if (_sign < 0){
+    if (_sign == SIGN_NEGATIVE){
         *this = (*this).abs() + num;
-        (*this)._sign = -1;
+        (*this)._sign = SIGN_NEGATIVE;
         return;
     }
-    BigInt minuent;
-    BigInt subtrahend;
-    if ((*this) >= num){
-        minuent = (*this);
-        subtrahend = num;
-    } else {
-        minuent = num;
-        subtrahend = (*this);
-    }
-    int index = subtrahend.getLength() - 1;
-    bool carry = false;
-    for (std::deque<int>::reverse_iterator digit = minuent._number.rbegin(); digit != minuent._number.rend(); ++digit, index--){
-        if (index >= 0){
-            (*digit) -= subtrahend._number.at(index);
+    BigInt minuent = (*this) >= num ? (*this) : num;
+    BigInt subtrahend = (*this) >= num ? num : (*this);
+    int carry = 0;
+    for (std::deque<int>::reverse_iterator digit = minuent._number.rbegin(); digit != minuent._number.rend(); ++digit){
+        if (subtrahend.getLength() > 0){
+            (*digit) -= subtrahend._number.back();
+            subtrahend._number.pop_back();
         }
-        if (carry){
-            (*digit)--;
-        }
-        carry = false;
+        (*digit) -= carry;
+        carry = 0;
         if (*digit < 0){
             if (digit != minuent._number.rbegin() - 1){
                 (*digit) += 10;
-                carry = true;
+                carry = 1;
             } else {
                 (*digit) *= -1;
-                minuent._sign = -1;
+                minuent._sign = SIGN_NEGATIVE;
             }
         }
     }
     bool negative = (*this) < num;
     (*this) = minuent.copy();
     if (negative && (*this) != 0){
-        _sign = -1;
+        _sign = SIGN_NEGATIVE;
     }
     _lTrim();
 }
@@ -182,11 +164,7 @@ void BigInt::operator *=(BigInt num)
     for (std::deque<BigInt>::iterator row = rows.begin(); row != rows.end(); row++){
         result += (*row);
     }
-    if (_sign ^ num._sign){
-        result._sign = -1;
-    } else {
-        result._sign = 1;
-    }
+    result._sign = _sign ^ num._sign ? SIGN_NEGATIVE : SIGN_POSITIVE;
     (*this) = result;
 }
 
@@ -284,13 +262,13 @@ bool BigInt::operator != (const BigInt& other)
 
 bool BigInt::operator < (const BigInt& other)
 {
-    if (other._sign > 0 && _sign < 0){
+    if (other._sign == SIGN_POSITIVE && _sign == SIGN_NEGATIVE){
         return true;
     }
-    if (other._sign < 0 && _sign > 0){
+    if (other._sign == SIGN_NEGATIVE && _sign == SIGN_POSITIVE){
        return false;
     }
-    if (other._sign > 0 && _sign > 0){
+    if (other._sign == SIGN_POSITIVE && _sign == SIGN_POSITIVE){
         if (other.getLength() > getLength()){
             return true;
         }
@@ -298,7 +276,7 @@ bool BigInt::operator < (const BigInt& other)
             return false;
         }
     }
-    if (other._sign < 0 && _sign < 0){
+    if (other._sign == SIGN_NEGATIVE && _sign == SIGN_NEGATIVE){
         if (other.getLength() < getLength()){
             return true;
         }
@@ -310,7 +288,7 @@ bool BigInt::operator < (const BigInt& other)
         if (_number.at(i) == other._number.at(i)){
             continue;
         }
-        return ((_number.at(i) < other._number.at(i)) && _sign > 0) || ((_number.at(i) > other._number.at(i)) && _sign < 0);
+        return ((_number.at(i) < other._number.at(i)) && _sign == SIGN_POSITIVE) || ((_number.at(i) > other._number.at(i)) && _sign == SIGN_NEGATIVE);
     }
 
     return false;
@@ -334,7 +312,7 @@ bool BigInt::operator >= (const BigInt& other)
 BigInt BigInt::abs()
 {
     BigInt num = (*this).copy();
-    num._sign = 1;
+    num._sign = SIGN_POSITIVE;
     return num;
 }
 

@@ -9,6 +9,8 @@
 class BigInt
 {
 public:
+    const static int SIGN_NEGATIVE = -1;
+    const static int SIGN_POSITIVE = 1;
     BigInt();
     BigInt(std::string);
     BigInt(int);
