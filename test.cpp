@@ -63,6 +63,7 @@ BOOST_AUTO_TEST_CASE(testArithmetics)
 	BOOST_CHECK((g+e) == -60);
 	BOOST_CHECK((a+b) == BigInt(-1));
 	BOOST_CHECK((d+1) == c);
+	BOOST_CHECK((1+d) == c);
 	BOOST_CHECK((c-1) == d);
 	BOOST_CHECK((c-c) == 0);
 	
@@ -75,5 +76,9 @@ BOOST_AUTO_TEST_CASE(testArithmetics)
 	BOOST_CHECK(g * 2 == 80);
 	BOOST_CHECK(f * e == 4000);
 	BOOST_CHECK(f * g == -1600);
+	BOOST_CHECK(h * i == 240000);
+	BOOST_CHECK(c * d == BigInt("99999999999990000000000000"));
+	BOOST_CHECK(d * 1 == d);
+	BOOST_CHECK(1 * d == d);
 }
 BOOST_AUTO_TEST_SUITE_END()

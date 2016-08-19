@@ -189,7 +189,7 @@ void BigInt::operator /=(BigInt num)
         (*this) = 1;
         return;
     }
-    if (2 * num.abs() > abs()){
+    if (2 * num.abs() > this->abs()){
         (*this) = 0;
         return;
     }

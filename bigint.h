@@ -15,22 +15,38 @@ public:
     BigInt(std::string);
     BigInt(int);
     operator std::string();
+    friend std::ostream& operator <<(std::ostream& os, const BigInt num);
     void operator +=(BigInt num);
     void operator +=(std::string num);
     void operator +=(int num);
+
     void operator -=(BigInt num);
     void operator -=(int num);
     void operator -=(std::string num);
+
     void operator *=(BigInt num);
     void operator *=(int num);
+    void operator *=(std::string num);
+
+    void operator /=(BigInt num);
+    void operator /=(int num);
+    void operator /=(std::string num);
+
     BigInt operator +(BigInt num);
     BigInt operator +(int num);
-    BigInt operator -(int num);
+
     BigInt operator -(BigInt num);
+    BigInt operator -(int num);
+
     BigInt operator *(BigInt num);
     BigInt operator *(int num);
+
+    BigInt operator /(BigInt num);
+    BigInt operator /(int num);
+
     BigInt operator ++ (int);
     BigInt operator -- (int);
+
     bool operator == (const BigInt& other);
     bool operator == (const int& other);
     bool operator != (const BigInt& other);
@@ -39,7 +55,6 @@ public:
     bool operator > (const BigInt& other);
     bool operator <= (const BigInt& other);
     bool operator >= (const BigInt& other);
-    void print();
     int getLength() const;
     BigInt copy();
     BigInt abs();
@@ -49,5 +64,9 @@ private:
     bool _isDigit(const std::string & digit);
     void _lTrim();
 };
+
+BigInt operator +(int num1, BigInt num2);
+BigInt operator -(int num1, BigInt num2);
+BigInt operator *(int num1, BigInt num2);
 
 #endif // BIGINT_H

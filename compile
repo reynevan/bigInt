@@ -1,0 +1,1 @@
+g++ -o main bigint.cpp main.cpp -lboost_unit_test_framework -std=c++11
